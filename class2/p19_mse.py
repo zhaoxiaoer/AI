@@ -19,11 +19,13 @@ train_loss_results = []
 for epoch in range(epochs):
     with tf.GradientTape() as tape:
         y = tf.matmul(x, w1)
-        loss = tf.math.reduce_mean(tf.math.square(y_ - y))
+        # loss = tf.math.reduce_mean(tf.math.square(y_ - y))
+        loss = tf.losses.MSE(y_, y)
     grad = tape.gradient(loss, w1)
     w1.assign_sub(lr * grad)
 
-    train_loss_results.append(loss)
+    # train_loss_results.append(loss)
+    train_loss_results.append(tf.reduce_mean(loss))
 
     if epoch % 500 == 0:
         print("epoch %d" % epoch)
