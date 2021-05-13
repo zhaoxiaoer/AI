@@ -16,7 +16,7 @@ b1 = tf.Variable(tf.constant(0.01, shape=[20]))
 w2 = tf.Variable(tf.random.truncated_normal((20, 1)))
 b2 = tf.Variable(tf.constant(0.01, shape=[1]))
 
-epochs = 500000
+epochs = 50000
 lr = 0.002
 train_loss_results = []
 lossx = []
@@ -26,7 +26,7 @@ lossz = []
 for epoch in range(epochs):
     with tf.GradientTape() as tape:
         y = tf.matmul(x, w1) + b1
-        y = tf.nn.relu(y)  # 如果不使用非线性激活函数，神经网络仍然是线性的
+        # y = tf.nn.relu(y)  # 如果不使用非线性激活函数，神经网络仍然是线性的
         y = tf.matmul(y, w2) + b2
         loss = tf.math.reduce_mean(tf.math.square(y_ - y)) + 0.03*(w1.numpy().sum() + w2.numpy().sum())
         # loss = tf.losses.MSE(y_, y)
@@ -55,7 +55,7 @@ for epoch in range(epochs):
         grid = np.c_[xg.ravel(), yg.ravel()]
         grid = tf.cast(grid, tf.float32)
         zg = tf.matmul(grid, w1) + b1
-        zg = tf.nn.relu(zg)
+        # zg = tf.nn.relu(zg)
         zg = (tf.matmul(zg, w2) + b2).numpy()
         zg = zg.reshape(xg.shape)
         axe1.plot_surface(xg, yg, zg, alpha=0.5)
@@ -81,9 +81,9 @@ for epoch in range(epochs):
         axe3.plot(train_loss_results)
         # w当前值
         axe4 = fig.add_subplot(224)
-        axe4.set_xlim(0, w1.numpy().size + w2.numpy().size)
+        axe4.set_xlim(-1, tf.size(w1) + tf.size(w2))
         axe4.set_ylim(-2, 2)
-        axe4.bar(range(w1.numpy().size + w2.numpy().size), np.concatenate((w1.numpy().ravel(), w2.numpy().ravel())))
+        axe4.bar(range(1, tf.size(w1) + tf.size(w2) + 1), np.concatenate((w1.numpy().ravel(), w2.numpy().ravel())))
         plt.pause(0.2)
 
 
