@@ -8,6 +8,16 @@ cifar10 = tf.keras.datasets.cifar10
 (x_train, y_train), (x_test, y_test) = cifar10.load_data()
 x_train, x_test = x_train / 255.0, x_test / 255.0
 
+image_gen_train = tf.keras.preprocessing.image.ImageDataGenerator(
+    rescale=1. / 1.,
+    rotation_range=45,
+    width_shift_range=.15,
+    height_shift_range=.15,
+    horizontal_flip=True,
+    zoom_range=0.5
+)
+image_gen_train.fit(x_train)
+
 
 class Baseline(Model):
     def __init__(self):
@@ -336,7 +346,9 @@ cp_callback = tf.keras.callbacks.ModelCheckpoint(filepath=checkpoint_save_path,
                                                  save_weights_only=True,
                                                  save_best_only=True)
 
-history = model.fit(x_train, y_train, batch_size=32, epochs=1, validation_data=(x_test, y_test), validation_freq=1,
+# history = model.fit(x_train, y_train, batch_size=32, epochs=1, validation_data=(x_test, y_test), validation_freq=1,
+#                     callbacks=[cp_callback])
+history = model.fit(image_gen_train.flow(x_train, y_train, batch_size=32), epochs=50, validation_data=(x_test, y_test), validation_freq=1,
                     callbacks=[cp_callback])
 model.summary()
 
